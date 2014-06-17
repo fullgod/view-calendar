@@ -67,7 +67,7 @@ class ViewCalendar
 
 new ViewCalendar;
 
-function printme_link()
+function Calendar_shortcode_link()
 {
 	$new_calendar = new ViewCalendar;
 	echo $new_calendar->shortcode();
