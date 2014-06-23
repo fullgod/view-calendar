@@ -11,8 +11,7 @@ class ViewCalendar
 	private $plugin_slug = 'calendar_template';
 	private $options;
 
-	public function __construct()
-	{
+	public function __construct() {
 		$this->options = get_option( $this->plugin_slug . '_options' );
 		add_action( 'admin_menu', array( $this, 'adminMenu' ) );
 		add_action( 'admin_init', array( $this, 'registerSettings' ) );
@@ -21,14 +20,12 @@ class ViewCalendar
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
 	}
 	
-	public function adminMenu()
-	{
+	public function adminMenu() {
 		add_options_page( $this->plugin_name, $this->plugin_name, 'manage_options', $this->plugin_slug, array( $this, 'optionsPage' ) );
 		add_filter( 'plugin_action_links', array( $this, 'optionsLinks' ), 10, 2 );
 	}
 
-	public function optionsLinks( $actions, $plugin_file )
-	{
+	public function optionsLinks( $actions, $plugin_file ) {
 		if ( $plugin_file == plugin_basename( __FILE__ ) ) {
 			$settings_link = '<a href="options-general.php?page=' . esc_attr( $this->plugin_slug ) . '">' . __( 'Settings', $this->plugin_slug ) . '</a>';
 			array_unshift( $actions, $settings_link );
@@ -36,26 +33,34 @@ class ViewCalendar
 		return $actions;
 	}
 
-	public function registerSettings()
-	{
+	public function registerSettings() {
 		register_setting( $this->plugin_slug, $this->plugin_slug . '_options' );
 	}
 
-	public function getTemplate()
+	function registerScript()
 	{
+		wp_register_script( 'jquery-calendar', plugins_url( '/js/lib/jquery.min.js', __FILE__ ), array(), true );
+		wp_register_script( 'moment', plugins_url( '/js/lib/moment.min.js', __FILE__ ), array(), true );
+		wp_register_script( 'fullcalendar', plugins_url( '/js/fullcalendar.js', __FILE__ ), array(), true );
+		wp_register_script( 'calendar', plugins_url( '/js/calendar.js', __FILE__ ), array(), true );
+		wp_enqueue_script(array('jquery-calendar','moment', 'fullcalendar', 'calendar'));
+		wp_register_style( 'calendar-style', plugins_url( '/css/fullcalendar.css', __FILE__ ), array(), true );
+		wp_enqueue_style( 'calendar-style' );
+	}
+
+	public function getTemplate() {
 		if ( $this->checkMyTemplate() ) {
+			$this->registerScript();
 			include( plugin_dir_path( __FILE__ ) . 'calendar.php' );
 			exit();
 		}
 	}
 
-	private function checkMyTemplate()
-	{
+	private function checkMyTemplate() {
 		return isset( $_GET['view'] ) && $_GET['view'] == calendar;
 	}
 
-	public function optionsPage()
-	{
+	public function optionsPage() {
 		?>
 		<div class="wrap">
 			<h2><?php echo esc_html( $this->plugin_name ); ?></h2>
@@ -67,8 +72,7 @@ class ViewCalendar
 
 new ViewCalendar;
 
-function Calendar_shortcode_link()
-{
+function Calendar_shortcode_link() {
 	$new_calendar = new ViewCalendar;
 	echo $new_calendar->shortcode();
 }

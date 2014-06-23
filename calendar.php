@@ -1,3 +1,6 @@
 <?php get_header(); ?>
-<h2>VIEW CALENDAR</h2>
+<div class="wrap-calendar">
+	<h2>VIEW CALENDAR</h2>
+	<div id='calendar'></div>	
+</div>
 <?php get_footer(); ?>
